@@ -5,15 +5,31 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.TextView;
 
 import com.lego.playwebtask.R;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 
 public class ItemDetailFragment extends Fragment {
-    public static final String ARG_ITEM_ID = "item_id";
-//    private DummyContent.DummyItem mItem;
+    public static final String ARG_ITEM_LINK = "item_link";
+    @BindView(R.id.webView)
+    WebView mWebView;
 
+    private Unbinder mUnbinder;
+
+    public static ItemDetailFragment newInstance(String link) {
+        ItemDetailFragment myFragment = new ItemDetailFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_ITEM_LINK, link);
+        myFragment.setArguments(args);
+        return myFragment;
+    }
 
     public ItemDetailFragment() {
     }
@@ -21,31 +37,30 @@ public class ItemDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-//        if (getArguments().containsKey(ARG_ITEM_ID)) {
-//            // Load the dummy content specified by the fragment
-//            // arguments. In a real-world scenario, use a Loader
-//            // to load content from a content provider.
-//            mItem = DummyContent.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
-//
-//            Activity activity = this.getActivity();
-//            CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
-//            if (appBarLayout != null) {
-//                appBarLayout.setTitle(mItem.content);
-//            }
-//        }
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.recyclerview_item_detail, container, false);
-
-        // Show the dummy content as text in a TextView.
-//        if (mItem != null) {
-//            ((TextView) rootView.findViewById(R.id.item_detail)).setText(mItem.details);
-//        }
-
+        mUnbinder = ButterKnife.bind(this,rootView);
+        mWebView.setWebViewClient(new MyWebViewClient());
+        if (getArguments().containsKey(ARG_ITEM_LINK)) {
+            mWebView.loadUrl(getArguments().getString(ARG_ITEM_LINK));
+        }
         return rootView;
+    }
+
+    private class MyWebViewClient extends WebViewClient {
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url){
+            view.loadUrl(url);
+            return true;
+        }
     }
 }

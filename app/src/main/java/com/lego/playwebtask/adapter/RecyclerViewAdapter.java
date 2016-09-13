@@ -1,9 +1,11 @@
 package com.lego.playwebtask.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,20 +14,26 @@ import android.widget.TextView;
 
 
 import com.lego.playwebtask.R;
+import com.lego.playwebtask.activity.MainActivity;
 import com.lego.playwebtask.fragments.ItemDetailFragment;
+import com.lego.playwebtask.model.Item;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
 
-//    private final List<DummyContent.DummyItem> mValues;
+    private final List<Item> mValues;
+    private FragmentManager mFragmentManager;
+    private Context mContext;
 
-//    public RecyclerViewAdapter(List<DummyContent.DummyItem> items) {
-//        mValues = items;
-//    }
-    public RecyclerViewAdapter() {
-
+    public RecyclerViewAdapter(Context context, List<Item> items, FragmentManager fragmentManager) {
+        mValues = items;
+        mFragmentManager = fragmentManager;
+        mContext = context;
     }
 
     @Override
@@ -37,36 +45,44 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-//        holder.mItem = mValues.get(position);
-//        holder.mTitle.setText(mValues.get(position).id);
-//        holder.mDate.setText(mValues.get(position).content);
-//        holder.mAuthor.setText(mValues.get(position).content);
-//        holder.mImage.setImageResource(mValues.get(position).content);
+        holder.mItem = mValues.get(position);
+        holder.mTitle.setText(mValues.get(position).getmTitle());
+        holder.mDate.setText(mValues.get(position).getmPubDate());
+        holder.mAuthor.setText(mValues.get(position).getmAuthor());
+        Picasso.with(mContext).load(getImage(mValues.get(position).getmDescription())).into(holder.mImage);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                if (Settings.mTwoPane) {
-//                    Bundle arguments = new Bundle();
-//                    arguments.putString(ItemDetailFragment.ARG_ITEM_ID, holder.mItem.id);
-//                    ItemDetailFragment fragment = new ItemDetailFragment();
-//                    fragment.setArguments(arguments);
-//                        getSupportFragmentManager().beginTransaction()
-//                                .replace(R.id.container, fragment)
-//                                .commit();
-//                } else {
-//                    Context context = v.getContext();
-//                    Intent intent = new Intent(context, ItemDetailActivity.class);
-//                    intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, holder.mItem.id);
-//                    context.startActivity(intent);
-//                }
+                Fragment newFragment = ItemDetailFragment.newInstance(holder.mItem.getmLink());
+                switchFragment(newFragment);
+            }
+
+            private void switchFragment(Fragment newFragment) {
+                if (mContext == null)
+                    return;
+                if (mContext instanceof MainActivity) {
+                    MainActivity feeds = (MainActivity) mContext;
+                    feeds.switchContent(newFragment);
+                }
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return 3;//mValues.size();
+        return mValues.size();
+    }
+
+    private String getImage(String s) {
+        Pattern pattern = Pattern.compile("(https?:\\/\\/.*\\.(?:png|jpg))");
+        Matcher matcher = pattern.matcher(s);
+        if (matcher.find()) {
+            Log.d("Replace", "getImage: " + matcher.group(0) + "  " + matcher.groupCount());
+            return matcher.group(0);
+        } else {
+            return null;
+        }
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -75,7 +91,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         final TextView mDate;
         final TextView mAuthor;
         final ImageView mImage;
-//        DummyContent.DummyItem mItem;
+        Item mItem;
 
         ViewHolder(View view) {
             super(view);

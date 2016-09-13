@@ -1,11 +1,8 @@
-package com.lego.playwebtask.internet;
+package com.lego.playwebtask.request;
 
 import com.lego.playwebtask.model.DataContent;
 
-import java.util.List;
-
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.http.GET;
 
 

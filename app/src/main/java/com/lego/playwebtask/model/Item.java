@@ -1,6 +1,5 @@
 package com.lego.playwebtask.model;
 
-import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
@@ -13,53 +12,68 @@ import java.io.Serializable;
 @Root(name = "item", strict = false)
 public class Item implements Serializable {
     @Element(name = "pubDate")
-    private String mpubDate;
+    private String mPubDate;
+
     @Element(name = "title")
-    private String mtitle;
+    private String mTitle;
+
     @Element(name = "link")
-    private String mlink;
+    private String mLink;
+
+    @Element(name = "author")
+    private String mAuthor;
+
     @Element(name = "description")
-    private String mdescription;
+    private String mDescription;
 
     public Item() {
     }
 
-    public Item(String mdescription, String mlink, String mtitle, String mpubDate) {
-        this.mdescription = mdescription;
-        this.mlink = mlink;
-        this.mtitle = mtitle;
-        this.mpubDate = mpubDate;
+    public Item(String mDescription, String mlink, String mTitle, String mPubDate) {
+        this.setmDescription(mDescription);
+        this.setmLink(mlink);
+        this.setmTitle(mTitle);
+        this.setmPubDate(mPubDate);
     }
 
-    public String getMpubDate() {
-        return mpubDate;
+
+    public String getmPubDate() {
+        return mPubDate;
     }
 
-    public void setMpubDate(String mpubDate) {
-        this.mpubDate = mpubDate;
+    public void setmPubDate(String mPubDate) {
+        this.mPubDate = mPubDate;
     }
 
-    public String getMtitle() {
-        return mtitle;
+    public String getmTitle() {
+        return mTitle;
     }
 
-    public void setMtitle(String mtitle) {
-        this.mtitle = mtitle;
+    public void setmTitle(String mTitle) {
+        this.mTitle = mTitle;
     }
 
-    public String getMlink() {
-        return mlink;
+    public String getmLink() {
+        return mLink;
     }
 
-    public void setMlink(String mlink) {
-        this.mlink = mlink;
+    public void setmLink(String mLink) {
+        this.mLink = mLink;
     }
 
-    public String getMdescription() {
-        return mdescription;
+    public String getmAuthor() {
+        return mAuthor;
     }
 
-    public void setMdescription(String mdescription) {
-        this.mdescription = mdescription;
+    public void setmAuthor(String mAuthor) {
+        this.mAuthor = mAuthor;
+    }
+
+    public String getmDescription() {
+        return mDescription;
+    }
+
+    public void setmDescription(String mDescription) {
+        this.mDescription = mDescription;
     }
 }

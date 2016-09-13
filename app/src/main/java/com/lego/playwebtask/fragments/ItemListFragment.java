@@ -7,24 +7,35 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 
 import com.lego.playwebtask.R;
 import com.lego.playwebtask.adapter.RecyclerViewAdapter;
-import com.lego.playwebtask.internet.RetrofitRequest;
+import com.lego.playwebtask.model.Item;
+import com.lego.playwebtask.request.RequestCallback;
+import com.lego.playwebtask.request.RetrofitRequest;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class ItemListFragment extends Fragment{
+public class ItemListFragment extends Fragment implements RequestCallback {
 
     @BindView(R.id.recycler_list)
     RecyclerView mRecycler;
+    @BindView(R.id.progressBar)
+    ProgressBar mProgressBar;
 
     private Unbinder mUnbinder;
     private RetrofitRequest mRetrofitRequest;
@@ -38,20 +49,20 @@ public class ItemListFragment extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (hasConnection(getContext())){
+        if (hasConnection(getContext())) {
             mRetrofitRequest = RetrofitRequest.getInstance();
-            mRetrofitRequest.getData();
+        } else {
+            Toast.makeText(getContext(), R.string.check_connection, Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_itemlist, container, false);
-
         mUnbinder = ButterKnife.bind(this, rootView);
-
-        assert mRecycler != null;
-//        setupRecyclerView(mRecycler);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        mRecycler.setLayoutManager(linearLayoutManager);
+        setupRecyclerView();
 
         return rootView;
     }
@@ -74,8 +85,20 @@ public class ItemListFragment extends Fragment{
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
-    private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-//        recyclerView.setAdapter(new RecyclerViewAdapter(DummyContent.ITEMS));
-        recyclerView.setAdapter(new RecyclerViewAdapter());
+    private void setupRecyclerView() {
+        mProgressBar.setVisibility(View.VISIBLE);
+        mProgressBar.setActivated(true);
+        mRetrofitRequest.getData(this);
+    }
+
+    @Override
+    public void requestCallback(List<Item> items) {
+        if (mProgressBar!=null && mProgressBar.isActivated()) {
+            mProgressBar.setVisibility(View.GONE);
+            mProgressBar.setActivated(false);
+
+        }
+        RecyclerViewAdapter recyclerViewAdapter = new RecyclerViewAdapter(getContext(),items, getChildFragmentManager());
+        mRecycler.setAdapter(recyclerViewAdapter);
     }
 }
