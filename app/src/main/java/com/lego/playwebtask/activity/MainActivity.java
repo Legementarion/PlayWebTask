@@ -8,54 +8,81 @@ import android.os.Bundle;
 import android.widget.FrameLayout;
 
 import com.lego.playwebtask.R;
-import com.lego.playwebtask.fragments.ItemDetailFragment;
 import com.lego.playwebtask.fragments.ItemListFragment;
+import com.lego.playwebtask.internet.RetrofitRequest;
+import com.lego.playwebtask.realm.RealmDataController;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import io.realm.exceptions.RealmMigrationNeededException;
 
 public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.container)
     FrameLayout mContainer;
-    private Unbinder unbinder;
+    private Unbinder mUnbinder;
 
-
-    private FragmentManager fragmentManager;
-    private ItemListFragment listFragment;
-    private boolean doubleBackToExitPressedOnce;
+    private Realm mRealm;
+    private RetrofitRequest mRequestRetrofit;
+    private FragmentManager mFragmentManager;
+    private ItemListFragment mListFragment;
+    private boolean mDoubleBackToExitPressedOnce;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        unbinder = ButterKnife.bind(this);
-        listFragment = new ItemListFragment();
+        mUnbinder = ButterKnife.bind(this);
+        mListFragment = new ItemListFragment();
 
-        fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.container, listFragment).commit();
+        mFragmentManager = getSupportFragmentManager();
+        mFragmentManager.beginTransaction().replace(R.id.container, mListFragment).commit();
+
+        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder(this)
+                .name(Realm.DEFAULT_REALM_NAME)
+                .schemaVersion(0)
+                .build();
+        Realm.setDefaultConfiguration(realmConfiguration);
+
+        try {
+            Realm.getInstance(realmConfiguration);
+        } catch (RealmMigrationNeededException e){
+            try {
+                Realm.deleteRealm(realmConfiguration);
+                //Realm file has been deleted.
+                mRealm = Realm.getInstance(realmConfiguration);
+            } catch (Exception ex){
+                throw ex;
+                //No Realm file to remove.
+            }
+        }
+        mRealm = Realm.getInstance(realmConfiguration);
+        RealmDataController.with(this);
+        mRequestRetrofit = RetrofitRequest.getInstance(mRealm);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unbinder.unbind();
+        mUnbinder.unbind();
     }
 
     @Override
     public void onBackPressed() {
-        if (doubleBackToExitPressedOnce) {
+        if (mDoubleBackToExitPressedOnce) {
             super.onBackPressed();
             return;
         }
-        this.doubleBackToExitPressedOnce = true;
+        this.mDoubleBackToExitPressedOnce = true;
         Snackbar.make(mContainer, R.string.doubleClick_backBtn, Snackbar.LENGTH_SHORT).show();
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                doubleBackToExitPressedOnce = false;
+                mDoubleBackToExitPressedOnce = false;
             }
         }, 2000);
     }

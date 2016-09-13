@@ -1,28 +1,24 @@
 package com.lego.playwebtask.model;
 
 import org.simpleframework.xml.Element;
-import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
-import java.util.List;
+import java.io.Serializable;
 
-@Root(name = "breakfast_menu")
-public class DataContent {
-    @ElementList(inline = true)
-    List<News> newsList;
-}
 
-@Root(name="food")
-class News{
-    @Element(name = "title")
-    String title;
+@Root(name = "rss", strict = false)
+public class DataContent implements Serializable {
+    @Element(name = "channel")
+    private Channel mChannel;
 
-    @Element(name = "pubDate")
-    String date;
+    public Channel getmChannel() {
+        return mChannel;
+    }
 
-    @Element(name = "author")
-    String author;
+    public DataContent() {
+    }
 
-    @Element(name = "url")
-    String url;
+    public DataContent(Channel mChannel) {
+        this.mChannel = mChannel;
+    }
 }

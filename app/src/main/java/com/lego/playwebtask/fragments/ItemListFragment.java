@@ -1,7 +1,6 @@
 package com.lego.playwebtask.fragments;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -16,6 +15,7 @@ import android.view.ViewGroup;
 
 import com.lego.playwebtask.R;
 import com.lego.playwebtask.adapter.RecyclerViewAdapter;
+import com.lego.playwebtask.internet.RetrofitRequest;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -23,35 +23,35 @@ import butterknife.Unbinder;
 
 public class ItemListFragment extends Fragment{
 
-    /**
-     * Whether or not the activity is in two-pane mode, i.e. running on a tablet
-     * device.
-     */
-
     @BindView(R.id.recycler_list)
     RecyclerView mRecycler;
 
-    private Unbinder unbinder;
+    private Unbinder mUnbinder;
+    private RetrofitRequest mRetrofitRequest;
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        unbinder.unbind();
+        mUnbinder.unbind();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (hasConnection(getContext())){
+            mRetrofitRequest = RetrofitRequest.getInstance();
+            mRetrofitRequest.getData();
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_itemlist, container, false);
 
-        unbinder = ButterKnife.bind(this, rootView);
+        mUnbinder = ButterKnife.bind(this, rootView);
 
         assert mRecycler != null;
-        setupRecyclerView(mRecycler);
+//        setupRecyclerView(mRecycler);
 
         return rootView;
     }
