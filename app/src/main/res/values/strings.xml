@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Play Web Task</string>
+    <string name="doubleClick_backBtn">Tab again to exit</string>
+</resources>
