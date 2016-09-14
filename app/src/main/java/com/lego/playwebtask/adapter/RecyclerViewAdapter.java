@@ -77,6 +77,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         return mValues.size();
     }
 
+    /** get url from description */
     private String getImage(String s) {
         Pattern pattern = Pattern.compile("(https?:\\/\\/.*\\.(?:png|jpg|jpeg))");
         Matcher matcher = pattern.matcher(s);
