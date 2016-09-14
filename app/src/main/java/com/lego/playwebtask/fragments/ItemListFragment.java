@@ -96,7 +96,6 @@ public class ItemListFragment extends Fragment implements RequestCallback {
         if (mProgressBar!=null && mProgressBar.isActivated()) {
             mProgressBar.setVisibility(View.GONE);
             mProgressBar.setActivated(false);
-
         }
         RecyclerViewAdapter recyclerViewAdapter = new RecyclerViewAdapter(getContext(),items, getChildFragmentManager());
         mRecycler.setAdapter(recyclerViewAdapter);

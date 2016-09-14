@@ -1,13 +1,8 @@
 package com.lego.playwebtask.request;
 
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
-import com.lego.playwebtask.adapter.RecyclerViewAdapter;
 import com.lego.playwebtask.model.DataContent;
-import com.lego.playwebtask.model.Item;
-
-import java.util.List;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -45,7 +40,6 @@ public class RetrofitRequest {
                 .build();
         api = retrofit.create(MediaApi.class);
     }
-
 
 
     public void getData(final RequestCallback callback) {

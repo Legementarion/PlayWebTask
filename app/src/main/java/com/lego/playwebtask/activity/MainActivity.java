@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (!mListFragment.isResumed()) {
-            mFragmentManager.beginTransaction().replace(R.id.container, mListFragment).commit();
+            switchContent(mListFragment);
         } else {
             if (mDoubleBackToExitPressedOnce) {
                 super.onBackPressed();

@@ -23,6 +23,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
 
@@ -75,10 +78,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     private String getImage(String s) {
-        Pattern pattern = Pattern.compile("(https?:\\/\\/.*\\.(?:png|jpg))");
+        Pattern pattern = Pattern.compile("(https?:\\/\\/.*\\.(?:png|jpg|jpeg))");
         Matcher matcher = pattern.matcher(s);
         if (matcher.find()) {
-            Log.d("Replace", "getImage: " + matcher.group(0) + "  " + matcher.groupCount());
             return matcher.group(0);
         } else {
             return null;
@@ -87,19 +89,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     class ViewHolder extends RecyclerView.ViewHolder {
         final View mView;
-        final TextView mTitle;
-        final TextView mDate;
-        final TextView mAuthor;
-        final ImageView mImage;
+        @BindView(R.id.textTitle) TextView mTitle;
+        @BindView(R.id.textDate) TextView mDate;
+        @BindView(R.id.textAuthor) TextView mAuthor;
+        @BindView(R.id.imageView) ImageView mImage;
         Item mItem;
 
         ViewHolder(View view) {
             super(view);
             mView = view;
-            mTitle = (TextView) view.findViewById(R.id.textTitle);
-            mDate = (TextView) view.findViewById(R.id.textDate);
-            mAuthor = (TextView) view.findViewById(R.id.textAuthor);
-            mImage = (ImageView) view.findViewById(R.id.imageView);
+            ButterKnife.bind(this,view);
         }
     }
 }
